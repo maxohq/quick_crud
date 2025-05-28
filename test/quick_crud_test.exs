@@ -4,8 +4,9 @@ defmodule QuickCrudTest do
   alias QuickCrud.{Repo, User}
   import QuickCrud.Factory
 
-  @user %{username: "Bruce Lee", age: 2023 - 1940, bio: "Bruce Lee - the legend"}
-  @user2 %{username: "Bruce Willis", age: 2023 - 1955, bio: "Die Hard"}
+  @user %{username: "Bruce Lee", age: 2025 - 1940, bio: "Bruce Lee - the legend"}
+  @user2 %{username: "Bruce Willis", age: 2025 - 1955, bio: "Die Hard"}
+  @user3 %{username: "Jason Statham", age: 2025 - 1967, bio: "The Transporter"}
 
   defmodule UserContext do
     # https://elixirforum.com/t/prototyping-and-enforcing-context-function-conventions/38821/2
@@ -50,13 +51,31 @@ defmodule QuickCrudTest do
   test "list_users works" do
     insert(:user, @user)
     insert(:user, @user2)
-    UserContext.list_users()
+    insert(:user, @user3)
 
-    ## OR query (somewhat tricky syntax!)
-    UserContext.list_users(where: {[], [username: "Bruce Lee"], or: [username: "Bruce Willis"]})
+    res = UserContext.list_users()
+    assert Enum.count(res) == 3
+
+    ## OR query (somewhat tricky syntax, with a tuple of [], filters, or_filters)
+    res =
+      UserContext.list_users(where: {[], [username: "Bruce Lee"], or: [username: "Bruce Willis"]})
+
+    assert Enum.at(res, 0).username == "Bruce Lee"
+    assert Enum.at(res, 1).username == "Bruce Willis"
+    assert Enum.count(res) == 2
 
     ## with preloads
-    UserContext.list_users(preload: [:company, :posts])
+    res = UserContext.list_users(preload: [:company, :posts])
+    assert Enum.at(res, 0).username == "Bruce Lee"
+    assert Enum.at(res, 0).company.name
+    assert Enum.at(res, 0).posts == []
+    assert Enum.at(res, 1).username == "Bruce Willis"
+    assert Enum.at(res, 1).company.name
+    assert Enum.at(res, 1).posts == []
+    assert Enum.at(res, 2).username == "Jason Statham"
+    assert Enum.at(res, 2).company.name
+    assert Enum.at(res, 2).posts == []
+    assert Enum.count(res) == 3
   end
 
   test "get_user works" do
