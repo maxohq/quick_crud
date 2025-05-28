@@ -6,8 +6,10 @@ defmodule QuickCrud.MixProject do
       app: :quick_crud,
       version: "0.1.0",
       elixir: "~> 1.18",
+      elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
@@ -16,6 +18,16 @@ defmodule QuickCrud.MixProject do
     [
       extra_applications: [:logger],
       mod: {QuickCrud.Application, []}
+    ]
+  end
+
+  def elixirc_paths(:test), do: ["lib", "test/support"]
+  def elixirc_paths(_), do: ["lib"]
+
+  defp aliases do
+    [
+      setup: ["ecto.create --quiet", "ecto.migrate"],
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 
