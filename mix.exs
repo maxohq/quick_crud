@@ -1,15 +1,20 @@
 defmodule QuickCrud.MixProject do
   use Mix.Project
+  @github_url "https://github.com/maxohq/quick_crud"
+  @version "0.1.0"
 
   def project do
     [
       app: :quick_crud,
-      version: "0.1.0",
+      version: @version,
+      description: "QuickCrud - quick CRUD for Ecto",
+      source_url: @github_url,
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      aliases: aliases()
+      aliases: aliases(),
+      package: package()
     ]
   end
 
@@ -28,6 +33,17 @@ defmodule QuickCrud.MixProject do
     [
       setup: ["ecto.create --quiet", "ecto.migrate"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
+    ]
+  end
+
+  defp package do
+    [
+      files: ~w(lib mix.exs README* CHANGELOG*),
+      licenses: ["MIT"],
+      links: %{
+        "GitHub" => @github_url,
+        "Changelog" => "https://github.com/maxohq/quick_crud/blob/main/CHANGELOG.md"
+      }
     ]
   end
 
