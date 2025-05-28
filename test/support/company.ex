@@ -1,6 +1,7 @@
 defmodule QuickCrud.Company do
   use Ecto.Schema
   import Ecto.Changeset
+  use QueryBuilder, assoc_fields: [:users]
 
   schema "companies" do
     field(:name, :string)

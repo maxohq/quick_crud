@@ -1,5 +1,6 @@
 defmodule QuickCrud.Comment do
   use Ecto.Schema
+  use QueryBuilder, assoc_fields: [:post]
   import Ecto.Changeset
 
   schema "comments" do

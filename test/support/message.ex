@@ -1,6 +1,7 @@
 defmodule QuickCrud.Message do
   use Ecto.Schema
   import Ecto.Changeset
+  use QueryBuilder, assoc_fields: []
 
   @primary_key {:uid, Ecto.UUID, autogenerate: true}
 

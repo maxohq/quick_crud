@@ -1,6 +1,7 @@
 defmodule QuickCrud.Like do
   use Ecto.Schema
   import Ecto.Changeset
+  use QueryBuilder, assoc_fields: [:post, :user]
 
   schema "likes" do
     belongs_to(:user, QuickCrud.User)

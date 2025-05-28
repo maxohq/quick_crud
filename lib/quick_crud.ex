@@ -12,10 +12,8 @@ defmodule QuickCrud do
 
   defmacro list(config) do
     quote bind_quoted: [config: config] do
-      def unquote(:"list_#{config.plural_name}")(queries \\ & &1) do
-        unquote(config.schema)
-        |> queries.()
-        |> unquote(config.repo).all()
+      def unquote(:"list_#{config.plural_name}")(params \\ []) do
+        QueryBuilder.from_list(unquote(config.schema), params) |> unquote(config.repo).all()
       end
     end
   end
@@ -42,9 +40,8 @@ defmodule QuickCrud do
         - per_page: integer
         - queries: function that accepts an Ecto.Query for further filtering
       """
-      def unquote(:"paginate_#{config.plural_name}")(queries \\ & &1, page \\ 1, page_size \\ 25) do
-        unquote(config.schema)
-        |> queries.()
+      def unquote(:"paginate_#{config.plural_name}")(params \\ [], page \\ 1, page_size \\ 25) do
+        QueryBuilder.from_list(unquote(config.schema), params)
         |> QuickCrud.Pager.page(unquote(config.repo), page, page_size)
       end
     end
@@ -57,11 +54,10 @@ defmodule QuickCrud do
 
       Params:
         - id: integer / uuid / etc
-        - queries: function that accepts an Ecto.Query for further filtering
+        - params: list of params to filter the query
       """
-      def unquote(:"get_#{config.singular_name}!")(id, queries \\ & &1) do
-        unquote(config.schema)
-        |> queries.()
+      def unquote(:"get_#{config.singular_name}!")(id, params \\ []) do
+        QueryBuilder.from_list(unquote(config.schema), params)
         |> unquote(config.repo).get!(id)
       end
     end
@@ -76,9 +72,8 @@ defmodule QuickCrud do
         - id: integer / uuid / etc
         - queries: function that accepts an Ecto.Query for further filtering
       """
-      def unquote(:"get_#{config.singular_name}")(id, queries \\ & &1) do
-        unquote(config.schema)
-        |> queries.()
+      def unquote(:"get_#{config.singular_name}")(id, params \\ []) do
+        QueryBuilder.from_list(unquote(config.schema), params)
         |> unquote(config.repo).get(id)
       end
     end
@@ -92,9 +87,8 @@ defmodule QuickCrud do
         - value: value for #{attr_name}
         - queries: function that accepts an Ecto.Query for further filtering
       """
-      def unquote(:"get_#{config.singular_name}_by_#{attr_name}!")(value, queries \\ & &1) do
-        unquote(config.schema)
-        |> queries.()
+      def unquote(:"get_#{config.singular_name}_by_#{attr_name}!")(value, params \\ []) do
+        QueryBuilder.from_list(unquote(config.schema), params)
         |> unquote(config.repo).get_by!([{unquote(attr_name), value}])
       end
     end
@@ -108,9 +102,8 @@ defmodule QuickCrud do
         - value: value for #{attr_name}
         - queries: function that accepts an Ecto.Query for further filtering
       """
-      def unquote(:"get_#{config.singular_name}_by_#{attr_name}")(value, queries \\ & &1) do
-        unquote(config.schema)
-        |> queries.()
+      def unquote(:"get_#{config.singular_name}_by_#{attr_name}")(value, params \\ []) do
+        QueryBuilder.from_list(unquote(config.schema), params)
         |> unquote(config.repo).get_by([{unquote(attr_name), value}])
       end
     end
@@ -126,7 +119,7 @@ defmodule QuickCrud do
       """
       def unquote(:"get_#{config.singular_name}_for_#{assoc_name}!")(
             assoc_record,
-            queries \\ & &1
+            params \\ []
           ) do
         foreign_key =
           unquote(config.schema).__schema__(:association, unquote(assoc_name)).owner_key
@@ -134,7 +127,7 @@ defmodule QuickCrud do
         from(resource in unquote(config.schema),
           where: field(resource, ^foreign_key) == ^assoc_record.id
         )
-        |> queries.()
+        |> QueryBuilder.from_list(params)
         |> unquote(config.repo).one!()
       end
     end
@@ -149,14 +142,14 @@ defmodule QuickCrud do
         - assoc_record: instance of #{assoc_name}
         - queries: function that accepts an Ecto.Query for further filtering
       """
-      def unquote(:"get_#{config.singular_name}_for_#{assoc_name}")(assoc_record, queries \\ & &1) do
+      def unquote(:"get_#{config.singular_name}_for_#{assoc_name}")(assoc_record, params \\ []) do
         foreign_key =
           unquote(config.schema).__schema__(:association, unquote(assoc_name)).owner_key
 
         from(resource in unquote(config.schema),
           where: field(resource, ^foreign_key) == ^assoc_record.id
         )
-        |> queries.()
+        |> QueryBuilder.from_list(params)
         |> unquote(config.repo).one()
       end
     end

@@ -52,15 +52,11 @@ defmodule QuickCrudTest do
     insert(:user, @user2)
     UserContext.list_users()
 
-    UserContext.list_users(fn query ->
-      QueryBuilder.where(query, [], [username: "Bruce Lee"], or: [username: "Bruce Willis"])
-    end)
+    ## OR query (somewhat tricky syntax!)
+    UserContext.list_users(where: {[], [username: "Bruce Lee"], or: [username: "Bruce Willis"]})
 
-    UserContext.list_users(fn query ->
-      query
-      |> UserContext.preload_user_company()
-      |> UserContext.preload_user_posts()
-    end)
+    ## with preloads
+    UserContext.list_users(preload: [:company, :posts])
   end
 
   test "get_user works" do

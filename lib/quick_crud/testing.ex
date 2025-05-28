@@ -167,7 +167,7 @@ defmodule QuickCrud.Testing do
       config.factory.insert(config.factory_name)
     end
 
-    res = apply(config.context, :"paginate_#{config.plural_name}", [& &1, 2, 2])
+    res = apply(config.context, :"paginate_#{config.plural_name}", [[], 2, 2])
 
     assert %{
              count: 3,
@@ -180,7 +180,7 @@ defmodule QuickCrud.Testing do
              prev_page: 1
            } = res
 
-    res = apply(config.context, :"paginate_#{config.plural_name}", [& &1, 3, 2])
+    res = apply(config.context, :"paginate_#{config.plural_name}", [[], 3, 2])
 
     assert %{
              count: 3,

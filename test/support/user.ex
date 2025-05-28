@@ -1,6 +1,6 @@
 defmodule QuickCrud.User do
   use Ecto.Schema
-  use QueryBuilder
+  use QueryBuilder, assoc_fields: [:posts, :likes, :company]
   import Ecto.Changeset
 
   schema "users" do
