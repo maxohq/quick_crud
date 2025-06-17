@@ -31,7 +31,9 @@ defmodule MyApp.Accounts do
   require QuickCrud
   import Ecto.Query
 
-  @resource QuickCrud.config(User, MyApp.Repo, "users")
+  ## in case you want to override the singular name, provide it explicitly:
+  ## @resource QuickCrud.config(User, MyApp.Repo, plural: "users", singular: "user")
+  @resource QuickCrud.config(User, MyApp.Repo, plural: "users")
 
   # Generate common CRUD functions
   QuickCrud.list(@resource)
@@ -129,8 +131,8 @@ users = Accounts.filter_users_by_company(query, company)
 
 ```elixir
 # Upsert with custom conflict resolution
-QuickCrud.upsert(@resource, &User.changeset/2, 
-  on_conflict: {:replace, [:name, :updated_at]}, 
+QuickCrud.upsert(@resource, &User.changeset/2,
+  on_conflict: {:replace, [:name, :updated_at]},
   conflict_target: :email
 )
 ```
@@ -139,11 +141,11 @@ QuickCrud.upsert(@resource, &User.changeset/2,
 
 ```elixir
 # Get paginated results
-%{entries: users, total: total_count, page: 1, per_page: 10} = 
+%{entries: users, total: total_count, page: 1, per_page: 10} =
   Accounts.paginate_users([], 1, 10)
 
 # With filtering
-%{entries: users, total: total_count} = 
+%{entries: users, total: total_count} =
   Accounts.paginate_users([where: [active: true]], 2, 25)
 ```
 

@@ -5,7 +5,7 @@ defmodule QuickCrudCommentTest do
   defmodule CommentsContext do
     require QuickCrud
     import Ecto.Query
-    @resource QuickCrud.config(Comment, Repo, "comments")
+    @resource QuickCrud.config(Comment, Repo, plural: "comments")
 
     # Common CRUD functions
     QuickCrud.list(@resource)

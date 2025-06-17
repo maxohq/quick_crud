@@ -5,7 +5,7 @@ defmodule UserTest do
   defmodule UserContext do
     require QuickCrud
     import Ecto.Query
-    @resource QuickCrud.config(User, Repo, "users")
+    @resource QuickCrud.config(User, Repo, plural: "users")
 
     # Common CRUD functions
     QuickCrud.list(@resource)

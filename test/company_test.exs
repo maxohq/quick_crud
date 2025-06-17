@@ -5,7 +5,7 @@ defmodule CompanyTest do
   defmodule CompanyContext do
     require QuickCrud
     import Ecto.Query
-    @resource QuickCrud.config(Company, Repo, "companies")
+    @resource QuickCrud.config(Company, Repo, plural: "companies")
 
     # Common CRUD functions
     QuickCrud.list(@resource)

@@ -323,12 +323,13 @@ defmodule QuickCrud do
     end
   end
 
-  def config(schema, repo, plural) do
-    resource_name = QuickCrud.Naming.resource_name(schema)
+  def config(schema, repo, opts \\ []) do
+    singular_name = Keyword.get(opts, :singular, QuickCrud.Naming.resource_name(schema))
+    plural_name = Keyword.fetch!(opts, :plural)
 
     %{
-      singular_name: resource_name,
-      plural_name: plural,
+      singular_name: singular_name,
+      plural_name: plural_name,
       schema: schema,
       repo: repo
     }
